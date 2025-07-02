@@ -62,7 +62,7 @@ class BlogController{
         const data = await Blog.findById(id).populate('userId')
  
         console.log(data.userId.equals(userId)) 
-        // return 
+ 
 
         if(data.userId.equals(userId)){
             await Blog.findByIdAndDelete(id)

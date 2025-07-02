@@ -29,7 +29,7 @@ const isAuthenticated = async (req,res,next)=>{
         message : error.message
     })
   }
-    // check if decoded.id(userId) exists in the user table
+ 
 
  
 

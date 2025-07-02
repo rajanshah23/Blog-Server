@@ -15,7 +15,7 @@ app.use(express.json())
 connectDatabase(process.env.MONGO_URI)
 
 app.get("/",(req,res)=>{
-    res.send("<h1>Hello I am alive</h1>")
+    res.send("<h1>Hey developer I am alive</h1>")
 })
 
 
@@ -26,7 +26,7 @@ app.use(express.static('uploads'))
 
 const PORT = process.env.PORT || 3000
 app.listen(PORT,()=>{
-    console.log(`[server] has started at port ${PORT}`)
+    console.log(`Server has started at port  http://localhost:${PORT}`)
 })
 
 

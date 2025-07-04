@@ -6,13 +6,13 @@ const cors = require('cors')
 const userRoute = require("./routes/userRoute")
 const blogRoute = require("./routes/blogRoute")
 const { connectDatabase } = require("./database/database")
-
+connectDatabase(process.env.MONGO_URI)
 app.use(cors({
     origin : '*'
 }))
 app.use(express.json())
-
-connectDatabase(process.env.MONGO_URI)
+app.use(express.static('uploads'))
+ 
 
 app.get("/",(req,res)=>{
     res.send("<h1>Hey developer I am alive</h1>")
@@ -22,7 +22,7 @@ app.get("/",(req,res)=>{
 
 app.use("/api/user",userRoute)
 app.use("/api/user",blogRoute)
-app.use(express.static('uploads'))
+ 
 
 const PORT = process.env.PORT || 3000
 app.listen(PORT,()=>{

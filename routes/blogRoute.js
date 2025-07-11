@@ -2,7 +2,7 @@ const router = require("express").Router();
 const blogController = require("../controller/blog/blogController");
 const isAuthenticated = require("../middleware/isAuthenticated");
 const catchAsync = require("../services/catchAsync");
-const upload = require("../services/multerConfig"); // now it's the actual multer middleware
+const {upload} = require("../services/cloudinaryConfig"); // now it's the actual multer middleware
 
 router
   .route("/blog")

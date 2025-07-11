@@ -3,7 +3,12 @@ const fs = require("fs");
 
 class BlogController {
   // CREATE BLOG
+
   async createBlog(req, res) {
+    console.log("🔥 createBlog called");
+  console.log("📦 req.body:", req.body);
+  console.log("🖼️ req.file:", req.file);
+  console.log("👤 req.userId:", req.userId);
     try {
       const { title, subtitle, description, category } = req.body;
       const userId = req.userId;

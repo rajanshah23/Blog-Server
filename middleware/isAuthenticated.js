@@ -1,41 +1,37 @@
-const jwt = require("jsonwebtoken")
-const {promisify} = require("util")
-const User = require("../model/userModel")
+const jwt = require("jsonwebtoken");
+const { promisify } = require("util");
+const User = require("../model/userModel");
 
-const isAuthenticated = async (req,res,next)=>{
-    const token = req.headers.authorization
-    if(!token){
-      return  res.status(403).json({
-            message : "Please login"
-        })
-    }
+const isAuthenticated = async (req, res, next) => {
+  const authHeader = req.headers.authorization;
+  const token = authHeader && authHeader.startsWith("Bearer ") ? authHeader.split(" ")[1] : null;
+
+  if (!token) {
+    return res.status(403).json({
+      message: "Please login",
+    });
+  }
+
   try {
-    
-    const decoded = await promisify(jwt.verify)(token,process.env.JWT_SECRET)
-   
-    const doesUserExist =  await User.findOne({_id : decoded.id})
+    const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
 
-   if(!doesUserExist){
-    return res.status(404).json({
-        message : "User doesn't exists with that token/id"
-    })
-   }
-   req.user  = doesUserExist
-   req.userId = doesUserExist._id
+    const doesUserExist = await User.findOne({ _id: decoded.id });
 
-   next()
+    if (!doesUserExist) {
+      return res.status(404).json({
+        message: "User doesn't exist with that token/id",
+      });
+    }
+
+    req.user = doesUserExist;
+    req.userId = doesUserExist._id;
+
+    next();
   } catch (error) {
     res.status(500).json({
-        message : error.message
-    })
+      message: error.message,
+    });
   }
- 
+};
 
- 
-
-  
-
-}
-
-
-module.exports = isAuthenticated
+module.exports = isAuthenticated;

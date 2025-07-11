@@ -19,7 +19,7 @@ class BlogController {
         fileName =
           "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQfn8qSKm5XaNnIsQRF_00gXdf2VX-M5DBcuooLYpi_hQ&s";
       } else {
-        fileName = process.env.BASE_URL + req.file.filename;
+        fileName = process.env.BASE_URL + "uploads/" + req.file.filename;
       }
 
       const newBlog = await Blog.create({
@@ -100,6 +100,17 @@ class BlogController {
         });
       }
 
+      // Delete blog image file if exists and not default
+      if (data.imageUrl && !data.imageUrl.startsWith("http")) {
+        const existingImagePath = data.imageUrl.split('/uploads/')[1];
+        if (existingImagePath) {
+          fs.unlink(`uploads/${existingImagePath}`, (err) => {
+            if (err) console.log("Error deleting blog image:", err);
+            else console.log("Blog image deleted successfully");
+          });
+        }
+      }
+
       await Blog.findByIdAndDelete(id);
 
       return res.status(200).json({
@@ -129,18 +140,21 @@ class BlogController {
       let fileName = oldData.imageUrl;
 
       if (req.file) {
-        const localHostUrlLength = process.env.BASE_URL.length;
-        const existingImagePath = oldData.imageUrl.slice(localHostUrlLength);
-
-        fs.unlink(`uploads/${existingImagePath}`, (err) => {
-          if (err) {
-            console.log("Error deleting old image:", err);
-          } else {
-            console.log("Old image deleted successfully");
+        // Delete old image file if exists and not default image url
+        if (oldData.imageUrl && !oldData.imageUrl.startsWith("http")) {
+          const existingImagePath = oldData.imageUrl.split('/uploads/')[1];
+          if (existingImagePath) {
+            fs.unlink(`uploads/${existingImagePath}`, (err) => {
+              if (err) {
+                console.log("Error deleting old image:", err);
+              } else {
+                console.log("Old image deleted successfully");
+              }
+            });
           }
-        });
+        }
 
-        fileName = process.env.BASE_URL + req.file.filename;
+        fileName = process.env.BASE_URL + "uploads/" + req.file.filename;
       }
 
       await Blog.findByIdAndUpdate(id, {

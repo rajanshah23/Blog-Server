@@ -14,13 +14,14 @@ class BlogController {
         });
       }
 
-      let fileName;
-      if (!req.file) {
-        fileName =
-          "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQfn8qSKm5XaNnIsQRF_00gXdf2VX-M5DBcuooLYpi_hQ&s";
-      } else {
-        fileName = process.env.BASE_URL + "uploads/" + req.file.filename;
-      }
+    let imageUrl;
+    if (req.file && req.file.path) {
+      // multer-storage-cloudinary puts uploaded image URL in req.file.path
+      imageUrl = req.file.path;
+    } else {
+      imageUrl =
+        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQfn8qSKm5XaNnIsQRF_00gXdf2VX-M5DBcuooLYpi_hQ&s";
+    }
 
       const newBlog = await Blog.create({
         title,
@@ -28,7 +29,7 @@ class BlogController {
         description,
         category,
         userId,
-        imageUrl: fileName,
+        imageUrl,
       });
 
       return res.status(201).json({

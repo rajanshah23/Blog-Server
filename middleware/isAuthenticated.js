@@ -3,28 +3,23 @@ const { promisify } = require("util");
 const User = require("../model/userModel");
 
 const isAuthenticated = async (req, res, next) => {
-  let token = req.headers.authorization;
+  const authHeader = req.headers.authorization;
 
-  if (!token) {
-    return res.status(403).json({
-      message: "Please login",
-    });
+  if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    return res.status(403).json({ message: "Please login" });
   }
 
-  // ✅ Support both "Bearer <token>" and just "<token>"
-  if (token.startsWith("Bearer ")) {
-    token = token.split(" ")[1];
-  }
+  const token = authHeader.split(" ")[1]; // ✅ Extract token
 
   try {
     const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
 
-    const doesUserExist = await User.findById(decoded.id);
+    const doesUserExist = await User.findOne({ _id: decoded.id });
 
     if (!doesUserExist) {
-      return res.status(404).json({
-        message: "User doesn't exist with that token/id",
-      });
+      return res
+        .status(404)
+        .json({ message: "User doesn't exist with that token/id" });
     }
 
     req.user = doesUserExist;
@@ -32,9 +27,7 @@ const isAuthenticated = async (req, res, next) => {
 
     next();
   } catch (error) {
-    return res.status(401).json({
-      message: "Invalid token",
-    });
+    return res.status(500).json({ message: error.message });
   }
 };
 

@@ -24,7 +24,7 @@ class BlogController {
       // multer-storage-cloudinary puts uploaded image URL in req.file.path
       imageUrl = req.file.path;
     } else {
-      imageUrl =""
+      imageUrl ="https://imgs.search.brave.com/0FDP6A6kUjg7NYrfsZk1wUKN_rOvuUL2p41IeDhHroY/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9tZWRp/YS5pc3RvY2twaG90/by5jb20vaWQvOTIy/NzQ1MTkwL3Bob3Rv/L2Jsb2dnaW5nLWJs/b2ctY29uY2VwdHMt/aWRlYXMtd2l0aC13/b3JrdGFibGUuanBn/P3M9NjEyeDYxMiZ3/PTAmaz0yMCZjPXhS/MnZPbXRnLU42TG82/X0kyNjlTb001UFhF/VlJ4bGd2S3hYVUJN/ZU1DX0E9"
      }
 
       const newBlog = await Blog.create({

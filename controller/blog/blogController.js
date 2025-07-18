@@ -58,6 +58,7 @@ class BlogController {
       });
     } catch (error) {
       console.error("Error in getBlogs:", error);
+        console.error(error.stack);  
       return res.status(500).json({ message: error.message });
     }
   }

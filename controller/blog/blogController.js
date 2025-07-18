@@ -87,46 +87,48 @@ class BlogController {
   }
 
   // DELETE BLOG
-  async deleteBlog(req, res) {
-    try {
-      const id = req.params.id;
-      const userId = req.userId;
+async deleteBlog(req, res) {
+  try {
+    const id = req.params.id;
+    const userId = req.userId;
 
-      if (!id) {
-        return res.status(400).json({
-          message: "Please provide id",
-        });
-      }
-
-      const data = await Blog.findById(id).populate("userId");
-
-      if (!data.userId.equals(userId)) {
-        return res.status(403).json({
-          message: "You are not the author",
-        });
-      }
-
-      // Delete blog image file if exists and not default
-      if (data.imageUrl && !data.imageUrl.startsWith("http")) {
-        const existingImagePath = data.imageUrl.split('/uploads/')[1];
-        if (existingImagePath) {
-          fs.unlink(`uploads/${existingImagePath}`, (err) => {
-            if (err) console.log("Error deleting blog image:", err);
-            else console.log("Blog image deleted successfully");
-          });
-        }
-      }
-
-      await Blog.findByIdAndDelete(id);
-
-      return res.status(200).json({
-        message: "Blog deleted successfully",
-      });
-    } catch (error) {
-      console.error("Error in deleteBlog:", error);
-      return res.status(500).json({ message: error.message });
+    if (!id) {
+      return res.status(400).json({ message: "Please provide blog ID" });
     }
+
+    const data = await Blog.findById(id).populate("userId");
+
+    if (!data) {
+      return res.status(404).json({ message: "Blog not found" });
+    }
+
+    if (!data.userId || !data.userId.equals(userId)) {
+      return res.status(403).json({ message: "You are not the author" });
+    }
+
+    // Delete blog image file if exists and not default
+    if (data.imageUrl && !data.imageUrl.startsWith("http")) {
+      const existingImagePath = data.imageUrl.split("/uploads/")[1];
+      if (existingImagePath) {
+        fs.unlink(`uploads/${existingImagePath}`, (err) => {
+          if (err) {
+            console.log("Error deleting blog image:", err);
+          } else {
+            console.log("Blog image deleted successfully");
+          }
+        });
+      }
+    }
+
+    await Blog.findByIdAndDelete(id);
+
+    return res.status(200).json({ message: "Blog deleted successfully" });
+  } catch (error) {
+    console.error("Error in deleteBlog:", error);
+    return res.status(500).json({ message: error.message || "Internal Server Error" });
   }
+}
+
 
   // UPDATE BLOG
   async updateBlog(req, res) {

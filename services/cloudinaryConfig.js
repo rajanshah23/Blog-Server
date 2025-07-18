@@ -8,17 +8,17 @@ cloudinary.v2.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-// const storage = new CloudinaryStorage({
-//   cloudinary: cloudinary,
-//   params: {
-//     folder: 'blog_images', 
-//     allowed_formats: ['jpg', 'jpeg', 'png'],
-//   },
-// });
+const storage = new CloudinaryStorage({
+  cloudinary: cloudinary,
+  params: {
+    folder: 'blog_images', 
+    allowed_formats: ['jpg', 'jpeg', 'png'],
+  },
+});
 
-// const upload = multer({ storage });
+const upload = multer({ storage });
 
 module.exports = { 
   cloudinary,
-  //  uploads 
+   upload
   };

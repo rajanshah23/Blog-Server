@@ -24,9 +24,8 @@ class BlogController {
       // multer-storage-cloudinary puts uploaded image URL in req.file.path
       imageUrl = req.file.path;
     } else {
-      imageUrl =
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQfn8qSKm5XaNnIsQRF_00gXdf2VX-M5DBcuooLYpi_hQ&s";
-    }
+      imageUrl =""
+     }
 
       const newBlog = await Blog.create({
         title,

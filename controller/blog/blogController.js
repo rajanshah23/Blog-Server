@@ -96,19 +96,27 @@ async deleteBlog(req, res) {
       return res.status(400).json({ message: "Please provide blog ID" });
     }
 
-    const data = await Blog.findById(id).populate("userId");
+    const blog = await Blog.findById(id).populate("userId");
 
-    if (!data) {
+    if (!blog) {
       return res.status(404).json({ message: "Blog not found" });
     }
 
-    if (!data.userId || !data.userId.equals(userId)) {
+    if (!blog.userId) {
+      return res.status(403).json({ message: "This blog has no associated author" });
+    }
+
+    // Ensure both userId and blog.userId._id are strings for comparison
+    const blogAuthorId = blog.userId._id?.toString();
+    const currentUserId = userId?.toString();
+
+    if (blogAuthorId !== currentUserId) {
       return res.status(403).json({ message: "You are not the author" });
     }
 
-    // Delete blog image file if exists and not default
-    if (data.imageUrl && !data.imageUrl.startsWith("http")) {
-      const existingImagePath = data.imageUrl.split("/uploads/")[1];
+    // Delete blog image file if exists and not external
+    if (blog.imageUrl && !blog.imageUrl.startsWith("http")) {
+      const existingImagePath = blog.imageUrl.split("/uploads/")[1];
       if (existingImagePath) {
         fs.unlink(`uploads/${existingImagePath}`, (err) => {
           if (err) {
@@ -128,6 +136,7 @@ async deleteBlog(req, res) {
     return res.status(500).json({ message: error.message || "Internal Server Error" });
   }
 }
+
 
 
   // UPDATE BLOG
